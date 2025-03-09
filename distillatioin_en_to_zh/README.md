@@ -6,3 +6,7 @@ url in dataset.txt
 ```
 python filter_data.py
 ```
+# Merget token
+```
+merge_token.py
+```
