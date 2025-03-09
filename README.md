@@ -3,7 +3,7 @@
 
 *Latest News* 🔥
 
-- [2025/03] 支持图片多尺度训练、图片裁剪信息作为控制条件、支持长文本输入。
+- [2025/03] Supports multi-scale image training, uses image cropping information as control conditions, supports long text input, and enables distillation of English models into bilingual Chinese-English models.
 
 ---
 ## Train
