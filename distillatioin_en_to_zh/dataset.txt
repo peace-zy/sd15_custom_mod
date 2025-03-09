@@ -1,0 +1,1 @@
+https://storage.googleapis.com/nlp_chinese_corpus/translation2019zh.zip
