@@ -10,3 +10,8 @@ python filter_data.py
 ```
 merge_token.py
 ```
+# Train
+```
+sh run.sh
+sh run_multi_node.sh
+```
