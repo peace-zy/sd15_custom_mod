@@ -1,7 +1,6 @@
 #!/bin/bash
 export MODEL_NAME="realisticVisionV51_v51VAE"
-export DATASET_NAME="train_data/V07_new_data_for_train.csv"
-export DATASET_NAME='train_data/V07_new_data_for_train_add_size.csv'
+export DATASET_NAME='train_data/train_add_size.csv'
 
 accelerate launch --mixed_precision="fp16" --multi_gpu train_sd15_multi_scale_aspect-ratio-bucketing.py \
   --pretrained_model_name_or_path=${MODEL_NAME} \
