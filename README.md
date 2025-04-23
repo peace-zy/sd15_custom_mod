@@ -8,7 +8,7 @@
 ---
 ## Train
 ```
-sh train.sh
+sh run.sh
 ```
 
 ## Test
