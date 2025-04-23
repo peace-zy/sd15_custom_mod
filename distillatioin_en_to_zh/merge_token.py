@@ -170,7 +170,7 @@ def merge(clip_tokenizer, bert_tokenizer):
 def main():
     teacher_jsonl_file = "teacher.data"
     student_jsonl_file = "student.data"
-    model_path = '/mnt/bella/users/zhangyan/MultiModal/text2img/test/realisticVisionV51_v51VAE'
+    model_path = 'test/realisticVisionV51_v51VAE'
     teacher_tokenizer = CLIPTokenizer.from_pretrained(model_path, subfolder="tokenizer")
     student_tokenizer = BertTokenizer.from_pretrained(model_path, subfolder="tokenizer_bert")
     merge(teacher_tokenizer, student_tokenizer)
