@@ -1198,7 +1198,7 @@ def main():
                         prompt=batch["input_ids"],
                         device=latents.device,
                         num_images_per_prompt=1,
-                        do_classifier_free_guidance=True,
+                        do_classifier_free_guidance=False, #只进行text encode设置为False，设置True会将negative_prompt和prompt拼接
                         negative_prompt=None,
                         max_embeddings_multiples=max_embeddings_multiples,
                         prompt_embeds=None,
