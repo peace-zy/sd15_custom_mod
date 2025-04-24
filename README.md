@@ -16,3 +16,8 @@ sh run.sh
 cd infer_script
 sh infer.sh
 ```
+
+## Other
+[Bert tokenizer](https://huggingface.co/google-bert/bert-base-multilingual-uncased/blob/main/config.json)  
+[Base Model realisticVisionV51_v51VAE](https://huggingface.co/krnl/realisticVisionV51_v51VAE/tree/main)  
+https://modelscope.cn/models/AI-ModelScope/realisticVisionV51_v51VAE
