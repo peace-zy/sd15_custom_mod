@@ -7,8 +7,11 @@
 
 ---
 ## Train
+
+1. Download [realisticVisionV51_v51VAE](https://huggingface.co/krnl/realisticVisionV51_v51VAE/tree/main)  
+2. Modify unet **config.json** based on **unet_config.json**
 ```
-sh run.sh
+sh train.sh
 ```
 
 ## Test
@@ -19,5 +22,5 @@ sh infer.sh
 
 ## Other
 [Bert tokenizer](https://huggingface.co/google-bert/bert-base-multilingual-uncased/blob/main/config.json)  
-[Base Model realisticVisionV51_v51VAE](https://huggingface.co/krnl/realisticVisionV51_v51VAE/tree/main)  
+
 https://modelscope.cn/models/AI-ModelScope/realisticVisionV51_v51VAE
