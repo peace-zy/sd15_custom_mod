@@ -1,6 +1,6 @@
 #python infer_sd15_add_cond_lpw.py \
 python infer_sd15_add_cond.py \
-   --model_path '/mnt/bella/users/zhangyan/MultiModal/text2img/test/realisticVisionV51_v51VAE' \
+   --model_path 'realisticVisionV51_v51VAE' \
    --unet_path '../out_model/checkpoint-11000/unet' \
    --width 768 \
    --height 768 \
