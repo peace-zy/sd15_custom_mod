@@ -7,23 +7,24 @@ nproc_per_node=8
 master_addr="localhost"
 master_port=10
 teacher_model_name_or_path="realisticVisionV51_v51VAE"
-student_model_name_or_path="realisticVisionV51_v51VAE"
-train_data_file="dataset/translation2019zh/translation2019zh_train_clean.jsonl"
-test_data_file="dataset/translation2019zh/translation2019zh_valid_clean.jsonl"
-log_file="training_log_v6.txt"
+student_model_name_or_path="merged_model"
+train_data_file="dataset/translation2019zh_train_clean.jsonl"
+test_data_file="dataset/translation2019zh_valid_clean.jsonl"
+log_file="training_log.txt"
+num_train_epochs=50
 echo ${node_rank}
 torchrun --nproc_per_node ${nproc_per_node} \
     --nnodes ${nnodes} \
     --master_addr ${master_addr} \
     --master_port ${master_port} \
     --node_rank ${node_rank} \
-    distillatioin_en_to_zh_distributed_v6.py \
+    distillatioin_en_to_zh_distributed.py \
     --teacher_model_name_or_path ${teacher_model_name_or_path} \
     --teacher_tokenizer_subfolder "tokenizer" \
     --teacher_text_encoder_subfolder "text_encoder" \
     --student_model_name_or_path ${student_model_name_or_path} \
-    --student_tokenizer_subfolder "merged_clip_tokenizer_only_zh_word" \
-    --student_text_encoder_subfolder "merged_text_encoder_only_zh_word" \
+    --student_tokenizer_subfolder "tokenizer" \
+    --student_text_encoder_subfolder "text_encoder" \
     --student_tokenizer_type "CLIPTokenizer" \
     --student_fix_clip_embedding_with_teacher True \
     --student_fix_clip_embedding_name "text_encoder.text_model.embeddings.token_embedding.weight" \
@@ -39,8 +40,8 @@ torchrun --nproc_per_node ${nproc_per_node} \
     --weight_decay 0.001 \
     --warmup_ratio 0.001 \
     --lr_scheduler_type "cosine" \
-    --output_dir './results_v6_50epoch' \
-    --num_train_epochs 5000000000000 \
+    --output_dir './results_'${num_train_epochs}'epoch' \
+    --num_train_epochs ${num_train_epochs} \
     --per_device_train_batch_size 256 \
     --per_device_eval_batch_size 16 \
     --evaluation_strategy "epoch" \

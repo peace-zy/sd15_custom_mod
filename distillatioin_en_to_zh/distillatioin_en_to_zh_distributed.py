@@ -366,7 +366,8 @@ class DistillationTrainer(Trainer):
         self.model_args = model_args
         self.distill_loss_args = distill_loss_args
 
-    def compute_loss(self, model, inputs, return_outputs=False):
+    def compute_loss(self, model, inputs, return_outputs=False, num_items_in_batch=None):
+        #print(f'model={model}, inputs={inputs}, return_outputs={return_outputs}')
         if self.model_args.student_fix_clip_embedding_with_teacher:
             if hasattr(model, "module"):
                 fixed_student_weight_name = f"model.module.{model.module.fixed_student_weight_name}"

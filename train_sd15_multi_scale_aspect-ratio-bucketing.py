@@ -58,7 +58,7 @@ from PIL import Image, ImageOps
 
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
-from infer_scripts.lpw_stable_diffusion import StableDiffusionLongPromptWeightingPipeline
+from infer_script.lpw_stable_diffusion import StableDiffusionLongPromptWeightingPipeline
 
 if is_wandb_available():
     import wandb
@@ -469,6 +469,8 @@ def parse_args():
     parser.add_argument('--resize', type=bool_t, default='False',
                         help="Resizes dataset's images to the appropriate bucket dimensions.")
     parser.add_argument('--resolution', type=int, default='1024')
+    parser.add_argument('--max_embeddings_multiples', type=int, default=3)
+    parser.add_argument('--logging_steps', type=int, default=50, help="Log every X updates steps.")
 
     args = parser.parse_args()
     env_local_rank = int(os.environ.get("LOCAL_RANK", -1))
@@ -1148,8 +1150,6 @@ def main():
         disable=not accelerator.is_local_main_process,
     )
 
-    max_embeddings_multiples = 3
-
     for epoch in range(first_epoch, args.num_train_epochs):
         train_loss = 0.0
         for i, batch in enumerate(train_dataloader):
@@ -1200,13 +1200,13 @@ def main():
                         num_images_per_prompt=1,
                         do_classifier_free_guidance=False, #只进行text encode设置为False，设置True会将negative_prompt和prompt拼接
                         negative_prompt=None,
-                        max_embeddings_multiples=max_embeddings_multiples,
+                        max_embeddings_multiples=args.max_embeddings_multiples,
                         prompt_embeds=None,
                         negative_prompt_embeds=None,
                         clip_skip=None,
                         lora_scale=None,
                 )
-                print(f'prompt_embeds.shape={prompt_embeds.shape}, pooled_prompt_embeds.shape={pooled_prompt_embeds.shape}')
+                #print(f'prompt_embeds.shape={prompt_embeds.shape}, pooled_prompt_embeds.shape={pooled_prompt_embeds.shape}')
 
                 encoder_hidden_states = prompt_embeds
                 # #########################################################
@@ -1325,8 +1325,10 @@ def main():
                         logger.info(f"Saved state to {save_path}")
 
             logs = {"step_loss": loss.detach().item(), "lr": lr_scheduler.get_last_lr()[0]}
+            if global_step % args.logging_steps == 0 and accelerator.is_main_process:
+                logger.info(f"step {global_step}: {logs}")
             progress_bar.set_postfix(**logs)
-
+            
             if global_step >= args.max_train_steps:
                 break
 

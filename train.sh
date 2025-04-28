@@ -1,6 +1,6 @@
 #!/bin/bash
 export MODEL_NAME="realisticVisionV51_v51VAE"
-export DATASET_NAME='train_data/train_add_size.csv'
+export DATASET_NAME='train_data/train_sample.csv'
 
 accelerate launch --mixed_precision="fp16" --multi_gpu train_sd15_multi_scale_aspect-ratio-bucketing.py \
   --pretrained_model_name_or_path=${MODEL_NAME} \
@@ -18,5 +18,6 @@ accelerate launch --mixed_precision="fp16" --multi_gpu train_sd15_multi_scale_as
   --lr_scheduler="constant" \
   --lr_warmup_steps=0 \
   --checkpoints_total_limit=2 \
-  --output_dir="out_model_merge"
+  --max_embeddings_multiples=8 \
+  --output_dir="out_model"
   #--logging_step=40 \

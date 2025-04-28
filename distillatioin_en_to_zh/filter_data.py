@@ -21,20 +21,23 @@ def load_data(infile):
     return valid_data, unvalid_data
 
 def main():
-    train_data_file = 'dataset/translation2019zh/translation2019zh_train.json'
-    test_data_file = 'dataset/translation2019zh/translation2019zh_valid.json'
+    train_data_file = 'dataset/translation2019zh_train.json'
+    test_data_file = 'dataset/translation2019zh_valid.json'
     train_data, unvalid_train_data = load_data(train_data_file)
     test_data, unvalid_test_data = load_data(test_data_file)
-    with open('dataset/translation2019zh/translation2019zh_train_clean.jsonl', 'w') as f:
+    with open('dataset/translation2019zh_train_clean.jsonl', 'w') as f:
         for data in train_data:
             f.write(json.dumps(data, ensure_ascii=False) + '\n')
-    with open('dataset/translation2019zh/translation2019zh_valid_clean.jsonl', 'w') as f:
+    with open('dataset/translation2019zh_valid_clean.jsonl', 'w') as f:
         for data in test_data:
             f.write(json.dumps(data, ensure_ascii=False) + '\n')
-    with open('dataset/translation2019zh/translation2019zh_train_unvalid.jsonl', 'w') as f:
+    with open('dataset/translation2019zh_train_unvalid.jsonl', 'w') as f:
         for data in unvalid_train_data:
             f.write(json.dumps(data, ensure_ascii=False) + '\n')
-    with open('dataset/translation2019zh/translation2019zh_valid_unvalid.jsonl', 'w') as f:
+    with open('dataset/translation2019zh_valid_unvalid.jsonl', 'w') as f:
         for data in unvalid_test_data:
             f.write(json.dumps(data, ensure_ascii=False) + '\n')
     return
+
+if __name__ == "__main__":
+    main()

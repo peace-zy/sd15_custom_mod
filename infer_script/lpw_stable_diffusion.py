@@ -170,10 +170,12 @@ def get_prompts_with_weights(pipe: DiffusionPipeline, prompt: List[str], max_len
             # stop if the text is too long (longer than truncation limit)
             if len(text_token) > max_length:
                 truncated = True
+                logger.warning(f"Prompt was truncated. {len(text_token)} vs {max_length} tokens. ")
                 break
         # truncate
         if len(text_token) > max_length:
             truncated = True
+            logger.warning(f"Prompt was truncated. {len(text_token)} vs {max_length} tokens. ")
             text_token = text_token[:max_length]
             text_weight = text_weight[:max_length]
         tokens.append(text_token)

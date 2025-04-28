@@ -4,6 +4,8 @@ import copy
 from cv2 import add
 from tqdm import tqdm
 import re
+import os
+import shutil
 from transformers import BertTokenizer, BertModel, CLIPTokenizer, CLIPTextModel
 
 def read_teacher_file(teacher_jsonl_file):
@@ -82,7 +84,7 @@ def is_numeric_string(s):
                 break
     return res
 
-def merge(clip_tokenizer, bert_tokenizer):
+def merge(clip_tokenizer, bert_tokenizer, output_root):
     # 获取词汇表
     bert_vocab = bert_tokenizer.get_vocab()
     clip_vocab = clip_tokenizer.get_vocab()
@@ -112,7 +114,7 @@ def merge(clip_tokenizer, bert_tokenizer):
         token = token.replace("##", "")
         unique_chinese_tokens.append(token)
 
-    print(f"Chinese tokens: {len(unique_chinese_tokens)}")
+    print(f"Chinese unique tokens: {len(unique_chinese_tokens)}")
     digit_tokens = [token for token in bert_vocab.keys() if is_numeric_string(token) and len(token) > 1]
     with open("digit_tokens.txt", "w") as f:
         for token in digit_tokens:
@@ -129,13 +131,13 @@ def merge(clip_tokenizer, bert_tokenizer):
     clip_tokenizer.add_tokens(additional_tokens)
 
 
-    save_path = "./merged_tokenizer_new_1"
+    save_path = f"{output_root}/tokenizer"
     # 保存修改后的词汇表
     clip_tokenizer.save_pretrained(save_path)
 
     # 重新加载修改后的tokenizer
     merged_tokenizer = CLIPTokenizer.from_pretrained(save_path)
-    print(f"vocab size: {merged_tokenizer.vocab_size}")
+    print(f"vocab size: {len(merged_tokenizer)}")
 
     # 测试新的tokenizer
     text = "This is a test sentence."
@@ -144,9 +146,9 @@ def merge(clip_tokenizer, bert_tokenizer):
     tokens = merged_tokenizer.tokenize(text)
     token_ids = merged_tokenizer.convert_tokens_to_ids(tokens)
 
-    print("Tokens:", tokens)
-    print("Token IDs:", token_ids)
-    print("Token Size:", len(token_ids))
+    print("Merged tokens:", tokens)
+    print("Merged token IDs:", token_ids)
+    print("Merged token Size:", len(token_ids))
     ori_tokens = bert_tokenizer.tokenize(text)
     ori_token_ids = bert_tokenizer.convert_tokens_to_ids(ori_tokens)
     print("Original Tokens:", ori_tokens)
@@ -166,15 +168,31 @@ def merge(clip_tokenizer, bert_tokenizer):
         else:
             print(f"[diff] token: {token}, clip_tokens: {clip_tokens}")
     """
+    return len(merged_tokenizer)
 
+def modify_text_encoder_vocab_size(original_text_encoder_path, new_text_encoder_path, vocab_size):
+    if os.path.exists(new_text_encoder_path):
+        print(f"Path {new_text_encoder_path} already exists. Deleting it.")
+        shutil.rmtree(new_text_encoder_path)
+    shutil.copytree(original_text_encoder_path, new_text_encoder_path)
+    with open(f"{new_text_encoder_path}/config.json", "r") as f:
+        config = json.load(f)
+    config["vocab_size"] = vocab_size
+    with open(f"{new_text_encoder_path}/config.json", "w") as f:
+        json.dump(config, f, indent=2)
 def main():
+    model_path = 'realisticVisionV51_v51VAE'
+    teacher_tokenizer = CLIPTokenizer.from_pretrained(model_path, subfolder="tokenizer")
+    student_tokenizer = BertTokenizer.from_pretrained('./', subfolder="tokenizer_bert")
+    output_root = 'merged_model'
+    os.makedirs(output_root, exist_ok=True)
+    vocab_size = merge(teacher_tokenizer, student_tokenizer, output_root)
+    original_text_encoder_path = f'{model_path}/text_encoder'
+    new_text_encoder_path = f'{output_root}/text_encoder'
+    modify_text_encoder_vocab_size(original_text_encoder_path, new_text_encoder_path, vocab_size)
+    return
     teacher_jsonl_file = "teacher.data"
     student_jsonl_file = "student.data"
-    model_path = 'test/realisticVisionV51_v51VAE'
-    teacher_tokenizer = CLIPTokenizer.from_pretrained(model_path, subfolder="tokenizer")
-    student_tokenizer = BertTokenizer.from_pretrained(model_path, subfolder="tokenizer_bert")
-    merge(teacher_tokenizer, student_tokenizer)
-    return
     teacher_iter = read_teacher_file(teacher_jsonl_file)
     student_iter = read_teacher_file(student_jsonl_file)
     while True:
